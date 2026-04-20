@@ -1,2 +1,82 @@
+srun --pty -p interactive -t 02:00:00 --mem=8G bash
+
+module load conda/miniforge3/24.11.3-0
+
+conda create -n BST_Final_Proj
 conda activate BST_Final_Proj
 conda install -c bioconda glimmer -y
+
+assembly_out/final.contigs.fa
+
+long-orfs -n -t 1.15 my_consensus_genome.fa longorfs.coords
+
+#Starting at Mon Apr 20 16:52:50 2026
+
+#Sequence file = my_consensus_genome.fa
+#Excluded regions file = none
+#Circular genome = true
+#Initial minimum gene length = 90 bp
+#Determine optimal min gene length to maximize number of genes
+#Maximum overlap bases = 30
+#Start codons = atg,gtg,ttg
+#Stop codons = taa,tag,tga
+#Sequence length = 5486150
+#Final minimum gene length = 493
+#Number of genes = 2864
+#Total bases = 3655956
+
+
+extract -t my_consensus_genome.fa longorfs.coords > training.fna
+
+build-icm -r glimmer.icm < training.fna
+
+glimmer3 my_consensus_genome.fa glimmer.icm glimmer_output
+
+
+#Starting at Mon Apr 20 16:54:00 2026
+
+#Sequence file = my_consensus_genome.fa
+#Number of sequences = 4
+#ICM model file = glimmer.icm
+#Excluded regions file = none
+#List of orfs file = none
+#Input is NOT separate orfs
+#Independent (non-coding) scores are used
+#Circular genome = true
+#Truncated orfs = false
+#Minimum gene length = 100 bp
+#Maximum overlap bases = 30
+#Threshold score = 30
+#Use first start codon = false
+#Start codons = atg,gtg,ttg
+#Start probs = 0.600,0.300,0.100
+#Stop codons = taa,tag,tga
+#GC percentage = 42.8%
+#Ignore score on orfs longer than 599
+#Analyzing Sequence #1
+#Start Find_Orfs
+#Start Score_Orfs
+#Start Process_Events
+#Start Trace_Back
+#Analyzing Sequence #2
+#Start Find_Orfs
+#Start Score_Orfs
+#Start Process_Events
+#Start Trace_Back
+#Analyzing Sequence #3
+#Start Find_Orfs
+#Start Score_Orfs
+#Start Process_Events
+#Start Trace_Back
+#Analyzing Sequence #4
+#Start Find_Orfs
+#Start Score_Orfs
+#Start Process_Events
+#Start Trace_Back
+
+
+
+conda install -c bioconda prokka -y
+
+prokka my_consensus_genome.fa --outdir prokka_out_final --prefix consensus --cpus 4
+#/home/skg245/BST_Final_Proj/prokka_out_final
