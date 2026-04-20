@@ -1,0 +1,2 @@
+conda activate BST_Final_Proj
+conda install -c bioconda glimmer -y
