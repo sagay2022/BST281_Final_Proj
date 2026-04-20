@@ -1,0 +1,52 @@
+#Conducted on O2
+#
+
+srun --pty -p interactive -t 02:00:00 --mem=8G bash
+
+module load conda/miniforge3/24.11.3-0
+
+conda create -n BST_Final_Proj_01 python=3.10 -y
+conda activate BST_Final_Proj_01
+
+conda install -c bioconda bowtie2 samtools bcftools sra-tools -y
+conda install -c bioconda ncbi-datasets-cli -y
+
+mkdir BST_Final_Proj
+cd BST_Final_Proj
+
+datasets download genome accession GCF_018292205.1 --include genome
+unzip ncbi_dataset.zip
+find ncbi_dataset/ -name "*.fna"
+bowtie2-build ncbi_dataset/data/GCF_018292205.1/GCF_018292205.1_ASM1829220v1_genomic.fna ref_index
+
+
+prefetch ERR13818447
+fasterq-dump ERR13818447/ERR13818447.sra --split-files -O .
+
+bowtie2 -x ref_index -1 ERR13818447_1.fastq -2 ERR13818447_2.fastq -S ERR13818447.sam
+
+#289268 reads; of these:
+#  289268 (100.00%) were paired; of these:
+#    124836 (43.16%) aligned concordantly 0 times
+#    161505 (55.83%) aligned concordantly exactly 1 time
+#    2927 (1.01%) aligned concordantly >1 times
+#    ----
+#    124836 pairs aligned concordantly 0 times; of these:
+#      77564 (62.13%) aligned discordantly 1 time
+#    ----
+#    47272 pairs aligned 0 times concordantly or discordantly; of these:
+#      94544 mates make up the pairs; of these:
+#        85589 (90.53%) aligned 0 times
+#        5264 (5.57%) aligned exactly 1 time
+#        3691 (3.90%) aligned >1 times
+#85.21% overall alignment rate
+
+samtools view -bS ERR13818447.sam | samtools sort -o aligned.sorted.bam
+samtools index aligned.sorted.bam
+
+samtools flagstat aligned.sorted.bam
+
+bcftools mpileup -Ou -f ncbi_dataset/data/GCF_018292205.1/GCF_018292205.1_ASM1829220v1_genomic.fna aligned.sorted.bam | bcftools call -mv -Oz -o variants.vcf.gz
+bcftools index variants.vcf.gz
+bcftools consensus -f ncbi_dataset/data/GCF_018292205.1/GCF_018292205.1_ASM1829220v1_genomic.fna variants.vcf.gz > my_consensus_genome.fa
+#/home/skg245/BST_Final_Proj/my_consensus_genome.fa
