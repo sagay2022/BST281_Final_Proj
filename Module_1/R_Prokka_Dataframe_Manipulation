@@ -1,0 +1,39 @@
+library(Biostrings)
+library(dplyr)
+
+
+prokka_calls_df <- read.delim("/Users/Skylar/Downloads/BST_Final_Proj/prokka_out_final/consensus.tsv")
+
+hypo_proteins <- prokka_calls_df %>%
+  filter(prokka_calls_df$product == "hypothetical protein")
+hypo_proteins$title <- paste0(hypo_proteins$locus_tag, " ", hypo_proteins$product)
+
+
+
+
+# Read the files
+dna_sequences <- readDNAStringSet("/Users/Skylar/Downloads/BST_Final_Proj/prokka_out_final/consensus.ffn")
+aa_sequences <- readAAStringSet("/Users/Skylar/Downloads/BST_Final_Proj/prokka_out_final/consensus.faa")
+
+
+# Convert to dataframes
+dna_df <- data.frame(
+  title = names(dna_sequences),
+  sequence = as.character(dna_sequences)
+)
+aa_df <- data.frame(
+  title = names(aa_sequences),
+  sequence = as.character(aa_sequences)
+)
+
+# Filter out the hypothetical calls from the Prokka dfs
+
+
+dna_df_filtered_meta <- inner_join(dna_df, hypo_proteins, by = "title")
+aa_df_filtered_meta <- inner_join(aa_df, hypo_proteins, by = "title")
+
+# Now that thees have been filtered down to the hypothetical calls from prokke, write out the csv
+write.csv(dna_df_filtered_meta, "/Users/Skylar/Downloads/BST_Final_Proj/prokka_out_final/SAG_hypothetical_dna_calls.csv")
+
+write.csv(aa_df_filtered_meta, "/Users/Skylar/Downloads/BST_Final_Proj/prokka_out_final/SAG_hypothetical_aa_calls.csv")
+
