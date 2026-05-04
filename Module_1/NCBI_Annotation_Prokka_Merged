@@ -1,0 +1,91 @@
+library(Biostrings)
+library(dplyr)
+
+
+prokka_calls_df <- read.delim("/Users/Skylar/Downloads/BST_Final_Proj/prokka_out_final/consensus.tsv")
+
+hypo_proteins <- prokka_calls_df %>%
+  filter(prokka_calls_df$product == "hypothetical protein")
+hypo_proteins$title <- paste0(hypo_proteins$locus_tag, " ", hypo_proteins$product)
+
+
+
+
+# Read the files
+dna_sequences <- readDNAStringSet("/Users/Skylar/Downloads/BST_Final_Proj/prokka_out_final/consensus.ffn")
+aa_sequences <- readAAStringSet("/Users/Skylar/Downloads/BST_Final_Proj/prokka_out_final/consensus.faa")
+
+
+# Convert to dataframes
+dna_df <- data.frame(
+  title = names(dna_sequences),
+  sequence = as.character(dna_sequences)
+)
+aa_df <- data.frame(
+  title = names(aa_sequences),
+  sequence = as.character(aa_sequences)
+)
+
+# Filter out the hypothetical calls from the Prokka dfs
+
+
+dna_df_filtered_meta <- inner_join(dna_df, hypo_proteins, by = "title")
+aa_df_filtered_meta <- inner_join(aa_df, hypo_proteins, by = "title")
+
+# Now that thes have been filtered down to the hypothtical calls from prokke, write out the csv
+write.csv(dna_df_filtered_meta, "/Users/Skylar/Downloads/BST_Final_Proj/prokka_out_final/SAG_hypothetical_dna_calls.csv")
+
+write.csv(aa_df_filtered_meta, "/Users/Skylar/Downloads/BST_Final_Proj/prokka_out_final/SAG_hypothetical_aa_calls.csv")
+
+
+# Filter out the ones that were not called by the official annotation
+# Read in fastas
+dna_ncbi <- readDNAStringSet("/Users/Skylar/Downloads/bacteroides_caccae_annotation/ncbi_dataset/data/GCA_018292205.1/cds_from_genomic.fna")
+aa_ncbi <- readAAStringSet("/Users/Skylar/Downloads/bacteroides_caccae_annotation/ncbi_dataset/data/GCA_018292205.1/protein.faa")
+
+
+# Convert to dataframes
+dna_ncbi_df <- data.frame(
+  ncbi_annotation = names(dna_ncbi),
+  sequence = as.character(dna_ncbi)
+)
+aa_ncbi_df <- data.frame(
+  ncbi_annotation = names(aa_ncbi),
+  sequence = as.character(aa_ncbi)
+)
+
+# Filter out the ones that were not called by the official annotation
+
+
+
+dna_ncbi_collapsed <- dna_ncbi_df %>%
+  group_by(sequence) %>%
+  summarise(
+    ncbi_annotation = paste(unique(ncbi_annotation), collapse = "; "),
+    .groups = "drop"
+  )
+
+result_dna <- dna_df_filtered_meta %>%
+  semi_join(dna_ncbi_collapsed, by = "sequence") %>%
+  left_join(dna_ncbi_collapsed, by = "sequence") %>%
+  filter(grepl("hypothetical protein", ncbi_annotation, ignore.case = TRUE))
+
+
+aa_ncbi_collapsed <- aa_ncbi_df %>%
+  group_by(sequence) %>%
+  summarise(
+    ncbi_annotation = paste(unique(ncbi_annotation), collapse = "; "),
+    .groups = "drop"
+  )
+
+result_aa <- aa_df_filtered_meta %>%
+  semi_join(aa_ncbi_collapsed, by = "sequence") %>%
+  left_join(aa_ncbi_collapsed, by = "sequence") %>%
+  filter(grepl("hypothetical protein", ncbi_annotation, ignore.case = TRUE))
+
+
+#write csv with merged ncbi annotations
+# Now that thes have been filtered down to the hypothtical calls from prokke, write out the csv
+write.csv(result_dna, "/Users/Skylar/Downloads/BST_Final_Proj/prokka_out_final/SAG_ncbi_merged_dna_calls.csv")
+
+write.csv(result_aa, "/Users/Skylar/Downloads/BST_Final_Proj/prokka_out_final/SAG_ncbi_merged_aa_calls.csv")
