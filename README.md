@@ -1,4 +1,7 @@
 # BST281_Final_Proj
+### Skylar Ann Gay
+### 2026-05-13
+
 This README encompasses all analyses conducted by Skylar Ann Gay for BST 281 Spring 2026 for Module 1. This README, code files, data, and dependencies are publicly available on GitHub at https://github.com/sagay2022/BST281_Final_Proj/tree/main.
 
 ## Dependencies 
@@ -41,6 +44,9 @@ patchwork 1.3.2
 ## Code Files
 All O2 
 ### Assembly_O2_Workflow
+
+
+
 ### Glimmer_O2_Workflow
 ### R_Prokka_Dataframe_Manipulation
 ### R_Pangenome_Analysis
@@ -55,7 +61,10 @@ All O2
 ### SAG_ncbi_merged_dna_calls.csv
 
 ### Annotation (directory)
+Contains all output files from Glimmer_O2_Workflow.
+
 ### Assembly (directory)
+Contains all output files from Assembly_O2_Workflow.
 
 
 ### NCBI_pangenome_annotations (directory .tsv files)
