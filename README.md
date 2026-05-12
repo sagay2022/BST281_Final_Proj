@@ -1,6 +1,28 @@
 # BST281_Final_Proj
 This README encompasses all analyses conducted by Skylar Ann Gay for BST 281 Spring 2026 for Module 1. This README, code files, data, and dependencies are publicly available on GitHub at https://github.com/sagay2022/BST281_Final_Proj/tree/main.
 
+## Dependencies 
+### O2 Based Analyses
+(Conda) Miniforge3 24.11.3-0 
+Python 3.10.20
+bcftools 1.23.1
+bowtie2 2.5.5
+ncbi-datasets-cli 18.23.0
+samtools 1.23.1
+sra-tools 3.4.1
+Prokka 1.15.6
+Glimmer 3
+
+### R Bases Analyses
+R 4.5.2
+Biostrings 2.78.0
+dplyr 1.1.4.
+stringr 1.6.0
+purr 1.2.1
+tidyr 1.3.2
+ggplot2 4.0.2
+patchwork 1.3.2
+
 ## Code Files
 All O2 
 ### Assembly_O2_Workflow
@@ -10,6 +32,8 @@ All O2
 
 ## Data Files
 ### SAG_BActerodies_caccae_assembly_4-20-26.fa
+
+
 ### SAG_hypothetical_aa_calls.csv
 ### SAG_hypothetical_dna_calls.csv
 ### SAG_ncbi_merged_aa_calls.csv
@@ -17,7 +41,8 @@ All O2
 
 ### Annotation (directory)
 ### Assembly (directory)
-### Assembly > my_consensus_genome.fa
+
+
 ### NCBI_pangenome_annotations (directory .tsv files)
 This directory contains 13 .tsv files of genome annotations obtained from NCBI with the cooresponding accession number. Each file contains columns for gene Accession, Begin, End, Chromosome, Orientation, Name, Symbol, Gene ID, Gene Type, Transcripts accession, Protein accession, Protein length, and the Locus tag. These files contain protein coding genes, pseudogenes, tRNAs, and rRNAs.
 
@@ -40,12 +65,12 @@ This directory contains 13 .tsv files of genome annotations obtained from NCBI w
 ### NCBI_pangenome_annotations > protein_coding_NCBI.csv
 This .csv is the result of R_Pangenome_Analysis line 23. This contains file compiles the .tsv files in the NCBI_pangenome_annotations directory into a .csv, filtering down to rows containing only the protein-coding genes identified in the annotations. Each file contains columns for gene Accession, Begin, End, Chromosome, Orientation, Name, Symbol, Gene ID, Gene Type, Transcripts accession, Protein accession, Protein length, and Locus tag, and the Source file- including the organism name.
 
-
 ## Data Pulled from External Sources
 ### Reference genome
 |Species | Reference strain | Accession # |
 | -------- | -------- | -------- |
 | Bacteroides caccae | CL03T12C61 | GCA_018292205.1 |
+
 This is the recognized reference strain for *Bacteroides caccae*. I directly accessed this sequence while working in O2 (Assembly_o2_Workflow; lines 17-19).
 
 ### Sequencing reads
