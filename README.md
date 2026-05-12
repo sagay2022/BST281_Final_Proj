@@ -4,23 +4,38 @@ This README encompasses all analyses conducted by Skylar Ann Gay for BST 281 Spr
 ## Dependencies 
 ### O2 Based Analyses
 (Conda) Miniforge3 24.11.3-0 
+
 Python 3.10.20
+
 bcftools 1.23.1
+
 bowtie2 2.5.5
+
 ncbi-datasets-cli 18.23.0
+
 samtools 1.23.1
+
 sra-tools 3.4.1
+
 Prokka 1.15.6
+
 Glimmer 3
 
 ### R Bases Analyses
 R 4.5.2
+
 Biostrings 2.78.0
-dplyr 1.1.4.
+
+dplyr 1.1.4
+
 stringr 1.6.0
+
 purr 1.2.1
+
 tidyr 1.3.2
+
 ggplot2 4.0.2
+
 patchwork 1.3.2
 
 ## Code Files
