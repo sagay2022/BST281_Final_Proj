@@ -42,30 +42,42 @@ ggplot2 4.0.2
 patchwork 1.3.2
 
 ## Code Files
-All O2 
-### Assembly_O2_Workflow
+All Linux-based analyses were conducted on the Harvard Medical School O2 High Performance Computing CLuster by Skylar Ann Gay on 2026-04-20. All analyses were conducted with default settings and parameters in a Conda enviornment.
 
+
+All R-based analyses were conducted in R studio, locally on Microsoft Windows 11 Version 25H2 (OS Build 26200.8328). Individual R files include respective dependencies.
+
+
+### Assembly_O2_Workflow
+This file contains the workflow used to assembly *Bacteroides caccae* using GCA_018292205.1 as a reference and ERR13818447 as the paired end input sample. The output of this workflow is in the Assembly directory.
 
 
 ### Glimmer_O2_Workflow
+This file contains the workflow used to annotate (using Prokka) the assembled *Bacteroides caccae* genome and call ORFs (using Glimmer). The input for this work is in the Assembly directory and output is in the Annotation directory.
+
 ### R_Prokka_Dataframe_Manipulation
+This R file contains the custom R script to filter the Prokka calls in the Annotation directory to include hypothetical calls by Prokka (by gene name) and those that match the hypotheticals annotated in the NCBI reference genome (by gene name and sequence). The output file for this analysis are SAG_hypothetical_aa_calls.csv, SAG_hypothetical_dna_calls.csv, SAG_ncbi_merged_aa_calls.csv, and SAG_ncbi_merged_dna_calls.csv.
+
 ### R_Pangenome_Analysis
 
 ## Data Files
+
 ### SAG_BActerodies_caccae_assembly_4-20-26.fa
 
 
-### SAG_hypothetical_aa_calls.csv
-### SAG_hypothetical_dna_calls.csv
-### SAG_ncbi_merged_aa_calls.csv
-### SAG_ncbi_merged_dna_calls.csv
+### SAG_hypothetical_dna_calls.csv & SAG_hypothetical_aa_calls.csv
+The Prokka calls that are filtered by name to include on hypothetical proteins/gene sequences. These files are the result of lines 36 and 38 respectively.
 
-### Annotation (directory)
-Contains all output files from Glimmer_O2_Workflow.
+### SAG_ncbi_merged_aa_calls.csv & SAG_ncbi_merged_dna_calls.csv
+
+
 
 ### Assembly (directory)
 Contains all output files from Assembly_O2_Workflow.
 
+
+### Annotation (directory)
+Contains all output files from Glimmer_O2_Workflow.
 
 ### NCBI_pangenome_annotations (directory .tsv files)
 This directory contains 13 .tsv files of genome annotations obtained from NCBI with the cooresponding accession number. Each file contains columns for gene Accession, Begin, End, Chromosome, Orientation, Name, Symbol, Gene ID, Gene Type, Transcripts accession, Protein accession, Protein length, and the Locus tag. These files contain protein coding genes, pseudogenes, tRNAs, and rRNAs.
@@ -99,3 +111,9 @@ This is the recognized reference strain for *Bacteroides caccae*. I directly acc
 
 ### Sequencing reads
 I obtained sequencing reads from SRA: ERR13818447. This sequencing was conducted at the Monash Institute of Medical Research and used Illumina NovaSeq 6000 paired-end sequencing with a result of 81.9M bases, published on 2025-06-05. I pulled these directly into O2 using prefetch (Assembly_o2_Workflow; lines 23-24).
+
+
+
+
+
+## Last updated 2026-05-12 at 1:52pm SAG
