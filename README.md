@@ -56,20 +56,22 @@ This file contains the workflow used to assembly *Bacteroides caccae* using GCA_
 This file contains the workflow used to annotate (using Prokka) the assembled *Bacteroides caccae* genome and call ORFs (using Glimmer). The input for this work is in the Assembly directory and output is in the Annotation directory.
 
 ### R_Prokka_Dataframe_Manipulation
-This R file contains the custom R script to filter the Prokka calls in the Annotation directory to include hypothetical calls by Prokka (by gene name) and those that match the hypotheticals annotated in the NCBI reference genome (by gene name and sequence). The output file for this analysis are SAG_hypothetical_aa_calls.csv, SAG_hypothetical_dna_calls.csv, SAG_ncbi_merged_aa_calls.csv, and SAG_ncbi_merged_dna_calls.csv.
+This R file contains the custom R script to filter the Prokka calls in the Annotation directory to include hypothetical calls by Prokka (by gene name) and those that match the hypotheticals annotated in the NCBI reference genome (by gene name and sequence). The output file for this analysis are SAG_hypothetical_aa_calls.csv, SAG_hypothetical_dna_calls.csv, SAG_ncbi_merged_aa_calls.csv, and SAG_ncbi_merged_dna_calls.csv. All data involving the reference genome was called directly from GCA_018292205.1.
 
 ### R_Pangenome_Analysis
+This file contains the custom R script to conduct pangenome analysis on select gut microbes (see NCBI_pangenome_annotations). This scrit produces protein_coding_NCBI.csv and figure 1 pannels A, B, and C and calculates the number of dehydrogenases in each annotated reference genome by their substrate. 
 
 ## Data Files
 
 ### SAG_BActerodies_caccae_assembly_4-20-26.fa
-
+The fully assembled genome generated from 
+This file is also available in 
 
 ### SAG_hypothetical_dna_calls.csv & SAG_hypothetical_aa_calls.csv
-The Prokka calls that are filtered by name to include on hypothetical proteins/gene sequences. These files are the result of lines 36 and 38 respectively.
+The Prokka calls that are filtered by name to include only hypothetical proteins/gene sequences. These files are the result of R_Prokka_Dataframe_Manipulation.R; lines 36 and 38 respectively.
 
-### SAG_ncbi_merged_aa_calls.csv & SAG_ncbi_merged_dna_calls.csv
-
+### SAG_ncbi_merged_dna_calls.csv & SAG_ncbi_merged_aa_calls.csv
+The Prokka calls that are filtered by name and sequence to include only hypothetical proteins/gene sequences that are also present in the annotated reference genome. These files are the result of R_Prokka_Dataframe_Manipulation.R; lines 89 and 91 respectively.
 
 
 ### Assembly (directory)
@@ -116,4 +118,4 @@ I obtained sequencing reads from SRA: ERR13818447. This sequencing was conducted
 
 
 
-## Last updated 2026-05-12 at 1:52pm SAG
+## Last updated 2026-05-12 at 2:22pm SAG
