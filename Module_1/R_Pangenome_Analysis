@@ -1,0 +1,354 @@
+library(dplyr)
+library(stringr)
+library(purrr)
+library(tidyr)
+library(ggplot2)
+library(patchwork)
+
+
+
+folder_path <- "/Users/Skylar/Downloads/Pangenome"
+file_list <- list.files(path = folder_path, full.names = TRUE)
+
+combined_df <- do.call(rbind, lapply(file_list, function(x) {
+  df <- read.delim(x)
+  df$source_file <- basename(x)
+  return(df)
+}))
+
+protein_coding_df <- combined_df %>%
+  filter(Gene.Type == "protein-coding")
+
+
+write.csv(protein_coding_df, "/Users/Skylar/Downloads/Pangenome/protein_coding_NCBI.csv")
+
+dehydrogenase_df <-  combined_df %>% 
+  filter(str_detect(Name, "dehydrogenase"))
+
+glucose_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("glucose", ignore_case = TRUE)))
+
+gluconate_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("gluconate", ignore_case = TRUE)))
+
+glycerol_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("glycerol", ignore_case = TRUE)))
+
+mannitol_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("mannitol", ignore_case = TRUE)))
+
+galactitol_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("galactitol", ignore_case = TRUE)))
+
+inositol_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("inositol", ignore_case = TRUE)))
+
+quinate_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("quinate", ignore_case = TRUE)))
+
+shikimate_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("shikimate", ignore_case = TRUE)))
+
+alcohol_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("alcohol|ethanol|acetaldehyde", ignore_case = TRUE)))
+
+lactate_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("lactate", ignore_case = TRUE)))
+
+malate_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("malate", ignore_case = TRUE)))
+
+succinate_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("succinate", ignore_case = TRUE)))
+
+fumarate_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("fumarate", ignore_case = TRUE)))
+
+hydroxybutyrate_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("hydroxybutyrate", ignore_case = TRUE)))
+
+fatty_acid_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("acyl-CoA|hydroxyacyl-CoA", ignore_case = TRUE)))
+
+alanine_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("alanine", ignore_case = TRUE)))
+
+glutamate_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("glutamate", ignore_case = TRUE)))
+
+proline_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("proline", ignore_case = TRUE)))
+
+threonine_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("threonine", ignore_case = TRUE)))
+
+lysine_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("saccharopine|lysine", ignore_case = TRUE)))
+
+histidine_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("histid", ignore_case = TRUE)))
+
+formate_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("formate", ignore_case = TRUE)))
+
+carbon_monoxide_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("carbon.monoxide|carbon monoxide", ignore_case = TRUE)))
+
+steroid_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("steroid|hydroxysteroid", ignore_case = TRUE)))
+
+xanthine_df <- dehydrogenase_df %>% 
+  filter(str_detect(Name, regex("xanthine", ignore_case = TRUE)))
+
+carbon_source_list <- list(
+  glucose = glucose_df,
+  gluconate = gluconate_df,
+  glycerol = glycerol_df,
+  mannitol = mannitol_df,
+  galactitol = galactitol_df,
+  inositol = inositol_df,
+  quinate = quinate_df,
+  shikimate = shikimate_df,
+  alcohol = alcohol_df,
+  lactate = lactate_df,
+  malate = malate_df,
+  succinate = succinate_df,
+  fumarate = fumarate_df,
+  hydroxybutyrate = hydroxybutyrate_df,
+  fatty_acid = fatty_acid_df,
+  alanine = alanine_df,
+  glutamate = glutamate_df,
+  proline = proline_df,
+  threonine = threonine_df,
+  lysine = lysine_df,
+  histidine = histidine_df,
+  formate = formate_df,
+  carbon_monoxide = carbon_monoxide_df,
+  steroid = steroid_df,
+  xanthine = xanthine_df
+)
+heatmap_df <- map2_dfr(
+  carbon_source_list,
+  names(carbon_source_list),
+  ~ .x %>%
+    count(source_file, name = "count") %>%
+    mutate(carbon_source = .y)
+)
+heatmap_df <- heatmap_df %>%
+  mutate(
+    source_file = source_file %>%
+      str_replace_all("_", " ") %>%
+      str_remove("\\.tsv$")
+  )
+heatmap_df <- heatmap_df %>%
+  complete(
+    source_file,
+    carbon_source,
+    fill = list(count = 0)
+  )
+A <- ggplot(heatmap_df, aes(x = carbon_source, y = source_file, fill = count)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "#dfe2f0", high = "#0c1f75") +
+  theme_minimal() +
+  labs(
+    title = "A",
+    y = "",
+    fill = "Dehydrogenase Count",
+    x = "Dehydrogenase Substrates"
+  ) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    axis.text.y = element_text(face = "italic", size=12)
+  ) + 
+  theme(plot.title = element_text(size=22))
+
+heatmap_df <- as.data.frame(heatmap_df)
+bac_cac_df <- heatmap_df[heatmap_df$source_file == "bacteroides caccae" & heatmap_df$count != 0, ]
+alcohols <- bac_cac_df[bac_cac_df$carbon_source %in% c("alcohol"),]
+counts_alcohols <- sum(alcohols$count)
+lipids <- bac_cac_df[bac_cac_df$carbon_source %in% c("fatty acid"),]
+counts_lipids <- sum(lipids$count)
+amino_acid <- bac_cac_df[bac_cac_df$carbon_source %in% c("glutamate", "histidine", "lysine", "proline", "threonine"), ] 
+counts_amino_acid <- sum(amino_acid$count) 
+sugar <- bac_cac_df[bac_cac_df$carbon_source %in% c("gluconate", "glucose", "glycerol", "shikimate"), ] 
+counts_sugar <- sum(sugar$count) 
+acids_fermentation_poduct <- bac_cac_df[bac_cac_df$carbon_source %in% c("succinate","malate","fumarate"), ] 
+counts_acids <- sum(acids_fermentation_poduct$count)
+
+category_colors <- c(
+  "Alcohols" = "#C1B2AB",
+  "Lipids" = "#559CAD",
+  "Amino Acids" = "#8C5383",
+  "Sugars" = "#92374D",
+  "Acids" = "#0C1F75"
+)
+
+C <- ggplot(bac_cac_counts,
+       aes(ymax = ymax,
+           ymin = ymin,
+           xmax = 4,
+           xmin = 3,
+           fill = Category)) +
+  geom_rect() +
+  coord_polar(theta = "y") + 
+  xlim(c(2, 4)) +
+  scale_fill_manual(values = category_colors) +
+  theme_void() +
+  labs(title = "C") + 
+  theme(
+    plot.title = element_text(size = 22)
+  )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+heatmap_df <- as.data.frame(heatmap_df)
+alcohols <- heatmap_df[
+  heatmap_df$carbon_source %in% c("alcohol"),
+]
+counts_alcohols <- sum(alcohols$count)
+lipids <- heatmap_df[
+  heatmap_df$carbon_source %in% c("fatty_acid"),
+]
+counts_lipids <- sum(lipids$count)
+amino_acids <- heatmap_df[
+  heatmap_df$carbon_source %in% c(
+    "alanine",
+    "glutamate",
+    "histidine",
+    "lysine",
+    "proline",
+    "threonine"
+  ),
+]
+counts_amino_acids <- sum(amino_acids$count)
+sugars <- heatmap_df[
+  heatmap_df$carbon_source %in% c(
+    "glucose",
+    "gluconate",
+    "glycerol",
+    "mannitol",
+    "galactitol",
+    "inositol",
+    "quinate",
+    "shikimate"
+  ),
+]
+counts_sugars <- sum(sugars$count)
+acids <- heatmap_df[
+  heatmap_df$carbon_source %in% c(
+    "lactate",
+    "malate",
+    "succinate",
+    "fumarate",
+    "hydroxybutyrate"
+  ),
+]
+counts_acids <- sum(acids$count)
+one_carbon <- heatmap_df[
+  heatmap_df$carbon_source %in% c(
+    "formate",
+    "carbon_monoxide"
+  ),
+]
+counts_one_carbon <- sum(one_carbon$count)
+steroids <- heatmap_df[
+  heatmap_df$carbon_source %in% c("steroid"),
+]
+counts_steroids <- sum(steroids$count)
+purines <- heatmap_df[
+  heatmap_df$carbon_source %in% c("xanthine"),
+]
+counts_purines <- sum(purines$count)
+all_counts <- data.frame(
+  Category = c(
+    "Alcohols",
+    "Lipids",
+    "Amino Acids",
+    "Sugars",
+    "Acids",
+    "One-Carbon",
+    "Steroids",
+    "Purines"
+  ),
+  
+  Dehydrogenase_Counts = c(
+    counts_alcohols,
+    counts_lipids,
+    counts_amino_acids,
+    counts_sugars,
+    counts_acids,
+    counts_one_carbon,
+    counts_steroids,
+    counts_purines
+  )
+)
+all_counts$fraction <- all_counts$Dehydrogenase_Counts /
+  sum(all_counts$Dehydrogenase_Counts)
+all_counts$ymax <- cumsum(all_counts$fraction)
+all_counts$ymin <- c(
+  0,
+  head(all_counts$ymax, n = -1)
+)
+category_colors <- c(
+  "Alcohols" = "#C1B2AB",
+  "Lipids" = "#559CAD",
+  "Amino Acids" = "#8C5383",
+  "Sugars" = "#92374D",
+  "Acids" = "#0C1F75",
+  "One-Carbon" = "#C58063",
+  "Steroids" = "#666C87",
+  "Purines" = "#7C8766"
+)
+B <- ggplot(
+  all_counts,
+  aes(
+    ymax = ymax,
+    ymin = ymin,
+    xmax = 4,
+    xmin = 3,
+    fill = Category
+  )
+) +
+  geom_rect() +
+  coord_polar(theta = "y") +
+  xlim(c(2, 4)) +
+  scale_fill_manual(values = category_colors) +
+  theme_void() +
+  labs(title = "B") +
+  theme(
+    plot.title = element_text(size = 22)
+  )
+
+
+
+
+
+
+
+(A) / (B + C)
+
+
+
+
+
+result_aa <- read.csv("/Users/Skylar/Downloads/BST_Final_Proj/prokka_out_final/SAG_ncbi_merged_aa_calls.csv")
+prokka_calls_df <- read.delim("/Users/Skylar/Downloads/BST_Final_Proj/prokka_out_final/consensus.tsv")
+
+hypo_proteins <- prokka_calls_df %>%
+  filter(prokka_calls_df$product == "hypothetical protein")
+hypo_proteins$title <- paste0(hypo_proteins$locus_tag, " ", hypo_proteins$product)
+
+
+print(paste0("The total number of hypothetical proteins called by Prokka is ", nrow(hypo_proteins) ))
+
