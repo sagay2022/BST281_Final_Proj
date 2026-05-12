@@ -19,6 +19,39 @@ All O2
 ### Assembly (directory)
 ### Assembly > my_consensus_genome.fa
 ### NCBI_pangenome_annotations (directory .tsv files)
+
+|Species | Reference strain | Accession # |
+| -------- | -------- | -------- |
+| Bacteroides uniformis | JCM5828 | GCA_044361425.1 |
+| Alistipes putredinis | DSM 17216 |GCA_000154465.1 |
+| Ruminococcus bromii | min17_bin57 | GCA_928721825.1 |
+| Roseburia faecis | JCM 17581 | GCA_045061065.1 |
+| Lachnospira eligens | ATCC 27750 | GCA_000146185.1 |
+Fusicatenibacter saccharivorans
+AM67-22ACA
+GCA_027667425.1
+Bifidobacterium adolescentis
+ATCC 15703
+GCA_000010425.1
+Parabacteroides distasonis
+APCS2/PD
+GCA_018279895.1
+Collinsella aerofaciens
+JCM 10188
+GCA_010509075.1
+Akkermansia muciniphila
+JCM 30893
+GCA_009731575.1
+Anaerostipes hadrus
+BA1
+GCA_030864025.1
+Bacteroides caccae
+CL03T12C61
+GCA_018292205.1
+Roseburia inulinivorans
+FDAARGOS_1587
+GCA_020731525.1
+
 ### NCBI_pangenome_annotations > protein_coding_NCBI.csv
 
 ## Data Pulled from External Sources
